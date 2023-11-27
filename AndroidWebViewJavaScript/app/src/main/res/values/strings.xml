@@ -1,0 +1,4 @@
+<resources>
+    <string name="app_name">AndroidWebViewJavaScript</string>
+    <string name="send_msg">send msg to WebView</string>
+</resources>
