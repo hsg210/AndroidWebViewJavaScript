@@ -19,11 +19,32 @@
         <input type="button" value="Lock Back" onClick="lockBackKey(true)" />
         <br /><br />
         <input type="button" value="UnLock Back" onClick="lockBackKey(false)" />
+        <br /><br />
+        <input type="button" value="sendJSONObject()" onClick="sendJSONObject()" />
+        <p>Android Version: <span id="androidVersion"></span></p>
+        <p>Model: <span id="model"></span></p>
+        <p>Android Version: <span id="androidVersion"></span></p>
+        <p>Manufacturer: <span id="manufacturer"></span></p>
 
         <script language="javascript">
+            // 呼叫 顯示Android 版本號碼
+            window.onload = function() {
+                displayAndroidVersion();
+                displayDeviceInfo();
+            };
             // 呼叫 Android 顯示快顯訊息
             function showAndroidToast(toast) {
                 JsTest.showToast(toast);
+            }
+            function displayDeviceInfo() {
+                var deviceInfo = JSON.parse(JsTest.getDeviceInfo());
+                document.getElementById("model").innerText = deviceInfo.model;
+                document.getElementById("androidVersion").innerText = deviceInfo.androidVersion;
+                document.getElementById("manufacturer").innerText = deviceInfo.manufacturer;
+            }
+            function displayAndroidVersion() {
+                var androidVersion = JsTest.getAndroidVersion();
+                document.getElementById("androidVersion").innerText = androidVersion;
             }
 
             // 顯示 Android 標題列, showIt: true|false
@@ -34,6 +55,16 @@
             // 呼叫 Android 顯示對話框
             function openAndroidDialog() {
                 JsTest.openAndroidDialog("title from html", "msg from html");
+            }
+
+            // 呼叫 Android 顯示對話框
+            function sendJSONObject() {
+                var jsonObject = {
+                    "name": "John",
+                    "age": 30,
+                    "city": "New York"
+                };
+                JsTest.logJson(JSON.stringify(jsonObject));
             }
 
             // 鎖住 Android 返回鍵, lockIt: true|false
