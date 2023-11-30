@@ -7,6 +7,7 @@ import androidx.lifecycle.LifecycleRegistry;
 
 import android.content.Context;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -17,11 +18,15 @@ import android.webkit.WebViewClient;
 import android.widget.Button;
 import android.widget.Toast;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.util.HashMap;
 import java.util.Set;
 
 public class MainActivity extends AppCompatActivity {
     private static final String JS_NAME = "JsTest";
+    private String Tag = "MainActivity";
     private Toolbar mToolbar;
     private Button bCallJs;
     private WebView webView;
@@ -79,12 +84,48 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    class JsInterface {
+    public class JsInterface {
+        private static final String TAG = "JsInterface";
         private Context mContext;
-        JsInterface(Context context) {
+        public JsInterface(Context context) {
             mContext = context;
         }
 
+        @JavascriptInterface
+        public String getAndroidVersion() {
+            return Build.VERSION.RELEASE;
+        }
+        @JavascriptInterface
+        public String getDeviceInfo() {
+            JSONObject deviceInfo = new JSONObject();
+            try {
+                deviceInfo.put("model", Build.MODEL);
+                deviceInfo.put("androidVersion", Build.VERSION.RELEASE);
+                deviceInfo.put("manufacturer", Build.MANUFACTURER);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+            return deviceInfo.toString();
+        }
+        @JavascriptInterface
+        public void logJson(String json) {
+            Log.d(TAG, "logJson Received JSON: " + json);
+            try {
+                JSONObject jsonObject = new JSONObject(json);
+                String name = jsonObject.optString("name");
+                int age = jsonObject.optInt("age");
+                String city = jsonObject.optString("city");
+
+                // 將鍵和值存儲到相應的變數中
+                String nameVariable = name;
+                int ageVariable = age;
+                String cityVariable = city;
+
+                Log.d(TAG, "Received JSON - Name: " + nameVariable + ", Age: " + ageVariable + ", City: " + cityVariable);
+            } catch (JSONException e) {
+                Log.e(TAG, "Error parsing JSON: " + e.getMessage());
+            }
+        }
         @JavascriptInterface
         public void showToast(String msg) {
             Toast.makeText(mContext, msg, Toast.LENGTH_SHORT).show();
@@ -113,7 +154,6 @@ public class MainActivity extends AppCompatActivity {
                 Log.e("openAndroidDialog", "Exception: " + e.getMessage());
                 Toast.makeText(mContext, "Error: " + e.getMessage(), Toast.LENGTH_SHORT).show();
             }
-
  */
             //必須在主線程中調用，因為它會更新 UI,使用runOnUiThread()方法將handleLifecycleEvent()  方法的調用放到主線程中
             runOnUiThread(new Runnable() {
